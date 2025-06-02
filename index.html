@@ -50,17 +50,16 @@
     let startTime;
     let timeoutId;
     let waiting = false;
-    let reactionTimes = [];
+
+    let reactionTimes = JSON.parse(localStorage.getItem("reactionTimes")) || [];
 
     function updateStats() {
       if (reactionTimes.length === 0) {
-        stats.innerText = "";
+        stats.innerText = "記録はまだありません。";
         return;
       }
 
-      // 平均
       const avg = reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length;
-      // 昇順にソート → 上位3つ
       const top3 = [...reactionTimes].sort((a, b) => a - b).slice(0, 3);
 
       stats.innerHTML = `
@@ -71,10 +70,15 @@
       `;
     }
 
+    function saveRecord() {
+      localStorage.setItem("reactionTimes", JSON.stringify(reactionTimes));
+    }
+
     button.addEventListener("click", () => {
       if (waiting) {
         const reactionTime = Date.now() - startTime;
         reactionTimes.push(reactionTime);
+        saveRecord();
         message.innerText = `反応速度: ${reactionTime} ミリ秒！`;
         button.innerText = "もう一回";
         button.classList.remove("ready");
@@ -98,6 +102,9 @@
         }, waitTime);
       }
     });
+
+    // 初期表示
+    updateStats();
   </script>
 </body>
 </html>
