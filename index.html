@@ -1,0 +1,26 @@
+import time
+import random
+
+def reaction_test():
+    print("反応速度テストゲーム！")
+    print("エンターキーを押す準備をしてね...")
+    input("準備ができたらエンターキーを押してスタート！")
+
+    wait_time = random.uniform(2, 5)
+    print("・・・待って・・・")
+    time.sleep(wait_time)
+
+    print("今だ！エンターキーを押して！")
+    start = time.time()
+    input()
+    end = time.time()
+
+    reaction_time = (end - start) * 1000  # ミリ秒に変換
+    print(f"反応速度: {reaction_time:.2f} ミリ秒")
+
+while True:
+    reaction_test()
+    retry = input("もう一回やる？ (y/n): ").strip().lower()
+    if retry != "y":
+        print("ゲームを終了します。お疲れさまでした！")
+        break
