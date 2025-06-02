@@ -1,26 +1,58 @@
-import time
-import random
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>反応速度テスト</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: #f0f0f0;
+    }
+    #message {
+      font-size: 24px;
+      margin: 20px;
+    }
+    button {
+      font-size: 20px;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>反応速度テスト</h1>
+  <div id="message">準備ができたら「スタート」を押してね！</div>
+  <button id="startButton">スタート</button>
 
-def reaction_test():
-    print("反応速度テストゲーム！")
-    print("エンターキーを押す準備をしてね...")
-    input("準備ができたらエンターキーを押してスタート！")
+  <script>
+    const message = document.getElementById("message");
+    const button = document.getElementById("startButton");
+    let startTime;
+    let timeoutId;
+    let waiting = false;
 
-    wait_time = random.uniform(2, 5)
-    print("・・・待って・・・")
-    time.sleep(wait_time)
+    button.addEventListener("click", () => {
+      if (waiting) {
+        const reactionTime = Date.now() - startTime;
+        message.innerText = `反応速度: ${reactionTime} ミリ秒！`;
+        button.innerText = "もう一回";
+        waiting = false;
+        clearTimeout(timeoutId);
+      } else {
+        message.innerText = "・・・待って・・・（まだ押さないで！）";
+        button.style.display = "none";
+        const waitTime = Math.random() * 3000 + 2000; // 2〜5秒
 
-    print("今だ！エンターキーを押して！")
-    start = time.time()
-    input()
-    end = time.time()
-
-    reaction_time = (end - start) * 1000  # ミリ秒に変換
-    print(f"反応速度: {reaction_time:.2f} ミリ秒")
-
-while True:
-    reaction_test()
-    retry = input("もう一回やる？ (y/n): ").strip().lower()
-    if retry != "y":
-        print("ゲームを終了します。お疲れさまでした！")
-        break
+        timeoutId = setTimeout(() => {
+          message.innerText = "今だ！ボタンを押して！";
+          startTime = Date.now();
+          button.innerText = "押す！";
+          button.style.display = "inline-block";
+          waiting = true;
+        }, waitTime);
+      }
+    });
+  </script>
+</body>
+</html>
