@@ -11,12 +11,24 @@
       background-color: #f0f0f0;
     }
     #message {
-      font-size: 24px;
-      margin: 20px;
+      font-size: 28px;
+      margin: 30px;
     }
-    button {
-      font-size: 20px;
-      padding: 10px 20px;
+    #startButton {
+      font-size: 28px;
+      padding: 20px 40px;
+      border: none;
+      border-radius: 10px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #startButton.ready {
+      background-color: #28a745; /* 緑色に変化 */
+    }
+    #startButton:active {
+      transform: scale(0.98);
     }
   </style>
 </head>
@@ -37,11 +49,14 @@
         const reactionTime = Date.now() - startTime;
         message.innerText = `反応速度: ${reactionTime} ミリ秒！`;
         button.innerText = "もう一回";
+        button.classList.remove("ready");
         waiting = false;
         clearTimeout(timeoutId);
       } else {
         message.innerText = "・・・待って・・・（まだ押さないで！）";
         button.style.display = "none";
+        button.classList.remove("ready");
+
         const waitTime = Math.random() * 3000 + 2000; // 2〜5秒
 
         timeoutId = setTimeout(() => {
@@ -49,6 +64,7 @@
           startTime = Date.now();
           button.innerText = "押す！";
           button.style.display = "inline-block";
+          button.classList.add("ready");
           waiting = true;
         }, waitTime);
       }
