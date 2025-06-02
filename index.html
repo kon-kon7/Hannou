@@ -25,10 +25,14 @@
       transition: background-color 0.3s;
     }
     #startButton.ready {
-      background-color: #28a745; /* 緑色に変化 */
+      background-color: #28a745;
     }
     #startButton:active {
       transform: scale(0.98);
+    }
+    #stats {
+      margin-top: 30px;
+      font-size: 20px;
     }
   </style>
 </head>
@@ -36,28 +40,53 @@
   <h1>反応速度テスト</h1>
   <div id="message">準備ができたら「スタート」を押してね！</div>
   <button id="startButton">スタート</button>
+  <div id="stats"></div>
 
   <script>
     const message = document.getElementById("message");
     const button = document.getElementById("startButton");
+    const stats = document.getElementById("stats");
+
     let startTime;
     let timeoutId;
     let waiting = false;
+    let reactionTimes = [];
+
+    function updateStats() {
+      if (reactionTimes.length === 0) {
+        stats.innerText = "";
+        return;
+      }
+
+      // 平均
+      const avg = reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length;
+      // 昇順にソート → 上位3つ
+      const top3 = [...reactionTimes].sort((a, b) => a - b).slice(0, 3);
+
+      stats.innerHTML = `
+        📊 記録:
+        <br>平均: ${avg.toFixed(2)} ミリ秒
+        <br>ベスト3: ${top3.map(t => `${t.toFixed(2)} ms`).join(", ")}
+        <br>回数: ${reactionTimes.length} 回
+      `;
+    }
 
     button.addEventListener("click", () => {
       if (waiting) {
         const reactionTime = Date.now() - startTime;
+        reactionTimes.push(reactionTime);
         message.innerText = `反応速度: ${reactionTime} ミリ秒！`;
         button.innerText = "もう一回";
         button.classList.remove("ready");
         waiting = false;
         clearTimeout(timeoutId);
+        updateStats();
       } else {
         message.innerText = "・・・待って・・・（まだ押さないで！）";
         button.style.display = "none";
         button.classList.remove("ready");
 
-        const waitTime = Math.random() * 3000 + 2000; // 2〜5秒
+        const waitTime = Math.random() * 3000 + 2000;
 
         timeoutId = setTimeout(() => {
           message.innerText = "今だ！ボタンを押して！";
